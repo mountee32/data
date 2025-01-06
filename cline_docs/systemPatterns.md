@@ -348,3 +348,41 @@ The task management system supports:
 10. Progress monitoring through checklists
 
 This model captures the complex relationships and data requirements of a legal case management system while maintaining data integrity and supporting comprehensive case tracking and management.
+
+## Case Management API
+
+The Case API provides CRUD operations for managing legal cases. Key endpoints:
+
+- `POST /api/v1/cases/` - Create new case
+  - Requires: case_number, title, case_type, status
+  - Optional: court, jurisdiction, filing_date, description, practice_area, etc.
+  
+- `GET /api/v1/cases/` - List all cases
+  - Supports pagination (skip, limit parameters)
+  - Returns: Array of case objects with all fields
+
+- `GET /api/v1/cases/{case_id}` - Get specific case
+  - Returns: Full case details including related entities
+
+- `PUT /api/v1/cases/{case_id}` - Update case
+  - Supports partial updates
+  - Returns: Updated case object
+
+- `DELETE /api/v1/cases/{case_id}` - Delete case
+  - Soft delete implementation
+  - Returns: Deleted case object
+
+### Authentication & Authorization
+All endpoints require JWT authentication. Role-based access control:
+- Admins: Full CRUD access
+- Attorneys: Read access to assigned cases, limited write access
+- Clients: Read-only access to their own cases
+
+### Error Handling
+Standard HTTP status codes:
+- 200: Success
+- 400: Bad request (validation errors)
+- 401: Unauthorized
+- 403: Forbidden (insufficient permissions)
+- 404: Case not found
+- 500: Server error
