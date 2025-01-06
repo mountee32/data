@@ -1,42 +1,128 @@
-# Technical Stack & Architecture
+# Technical Stack & Implementation Details
 
-## Frontend
-- React.js with TypeScript
-- Material UI for component library
-- Redux for state management
-- React Query for API data fetching
-- React Router for navigation
+## Backend Architecture
+1. Framework & Core
+   - FastAPI (async web framework)
+   - Pydantic for data validation
+   - SQLAlchemy for ORM
+   - Alembic for migrations
+   - JWT for authentication
 
-## Backend
-- FastAPI (Python)
-- SQLite database
-- SQLAlchemy ORM
-- Pydantic for data validation
-- OpenAI API integration for AI features
+2. Database
+   - SQLite (current development)
+   - SQLAlchemy async engine
+   - Migration-based schema management
+   - Indexed fields for performance
+
+3. Authentication System
+   - JWT token-based auth
+   - Bcrypt password hashing
+   - Role-based access control
+   - Token refresh mechanism
+
+## API Structure
+1. Core Components
+   ```
+   app/
+   ├── api/
+   │   └── v1/
+   │       ├── endpoints/
+   │       │   ├── auth.py
+   │       │   └── users.py
+   │       └── api.py
+   ├── core/
+   │   ├── config.py
+   │   └── security.py
+   ├── db/
+   │   ├── base.py
+   │   └── session.py
+   ├── models/
+   │   └── user.py
+   └── schemas/
+       └── user.py
+   ```
+
+2. Database Models
+   - Base model with common fields
+   - SQLAlchemy async models
+   - Relationship management
+   - Index optimization
+
+3. API Endpoints
+   - Versioned API structure
+   - OpenAPI documentation
+   - Input validation
+   - Error handling
+
+## Security Implementation
+1. Authentication
+   - JWT token generation
+   - Password hashing with bcrypt
+   - Token validation middleware
+   - Secure password storage
+
+2. Authorization
+   - Role-based access control
+   - Permission checking
+   - Protected routes
+   - User verification
+
+3. Data Protection
+   - Input validation
+   - SQL injection prevention
+   - Password hashing
+   - Token encryption
 
 ## Development Tools
-- VSCode
-- Git for version control
-- Docker for containerization
-- pytest for backend testing
-- Jest for frontend testing
+1. Core Tools
+   - Python 3.12
+   - FastAPI
+   - SQLAlchemy
+   - Alembic
+   - Pydantic
 
-## Technical Requirements
-- Modern browser support
-- Responsive design
-- Offline capability for basic features
-- Document encryption
-- Role-based access control
+2. Testing & Development
+   - Uvicorn server
+   - SQLite database
+   - Python virtual environment
+   - Git version control
 
-## API Integration Points
-- OpenAI GPT API for document drafting and summarization
-- Calendar API for scheduling
-- Document storage service
-- Email notification service
+3. Documentation
+   - OpenAPI (Swagger)
+   - Markdown documentation
+   - API endpoint docs
+   - Schema documentation
 
-## Security Considerations
-- JWT authentication
-- Role-based access control (RBAC)
-- Document encryption at rest
-- API rate limiting
-- Input validation and sanitization
+## Environment Setup
+1. Configuration
+   ```python
+   # .env
+   DATABASE_URL=sqlite:///./database/legal_cases.db
+   SECRET_KEY=your-secret-key
+   ```
+
+2. Dependencies
+   ```
+   fastapi==0.104.1
+   uvicorn==0.24.0
+   sqlalchemy==2.0.23
+   pydantic==2.5.2
+   python-jose==3.3.0
+   passlib==1.7.4
+   ```
+
+## Next Implementation Steps
+1. Attorney Module
+   - Model implementation
+   - API endpoints
+   - Relationship with User model
+
+2. Case Management
+   - Case model
+   - Document storage
+   - Client relationships
+
+3. AI Integration
+   - OpenAI API setup
+   - Document processing
+   - Case analysis
