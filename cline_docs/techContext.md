@@ -1,5 +1,17 @@
 # Technical Stack & Implementation Details
 
+## Development Environment Setup
+1. Create virtual environment:
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   pip install pytest pytest-asyncio pytest-cov
+   ```
+
 ## Backend Architecture
 1. Framework & Core
    - FastAPI (async web framework)
@@ -86,6 +98,9 @@
    - SQLite database
    - Python virtual environment
    - Git version control
+   - pytest for testing
+   - pytest-cov for coverage
+   - pytest-asyncio for async tests
 
 3. Documentation
    - OpenAPI (Swagger)
@@ -107,8 +122,14 @@
    uvicorn==0.24.0
    sqlalchemy==2.0.23
    pydantic==2.5.2
+   pydantic-settings==2.1.0
    python-jose==3.3.0
    passlib==1.7.4
+   python-multipart==0.0.6
+   bcrypt==4.0.1
+   python-dotenv==1.0.0
+   aiosqlite==0.19.0
+   alembic==1.12.1
    ```
 
 ## Next Implementation Steps
