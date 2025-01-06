@@ -3,7 +3,6 @@ from sqlalchemy import Boolean, Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from app.db.base_class import Base
 
-
 class User(Base):
     __tablename__ = "users"
 
@@ -15,6 +14,9 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     last_login = Column(DateTime, nullable=True)
     is_active = Column(Boolean, default=True)
+
+    # Relationships
+    attorney = relationship("Attorney", back_populates="user", uselist=False)
 
     def __repr__(self):
         return f"<User {self.username}>"
