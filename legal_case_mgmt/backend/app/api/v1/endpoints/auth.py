@@ -5,7 +5,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core import security
+from app.core.security import create_access_token
+from app.core.password import verify_password, get_password_hash
 from app.core.config import settings
 from app.api import deps
 from app.models.user import User
@@ -31,7 +32,7 @@ async def login(
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    if not security.verify_password(form_data.password, user.password_hash):
+    if not verify_password(form_data.password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -39,7 +40,7 @@ async def login(
         )
     
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = security.create_access_token(
+    access_token = create_access_token(
         user.user_id, expires_delta=access_token_expires
     )
     
@@ -82,7 +83,7 @@ async def register(
     user = User(
         username=user_in.username,
         email=user_in.email,
-        password_hash=security.get_password_hash(user_in.password),
+        password_hash=get_password_hash(user_in.password),
         role=user_in.role
     )
     db.add(user)

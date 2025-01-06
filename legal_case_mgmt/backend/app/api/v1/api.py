@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import auth, users, case
+from app.api.v1.endpoints import auth, users, case, documents
 
 api_router = APIRouter()
 
@@ -7,9 +7,9 @@ api_router = APIRouter()
 api_router.include_router(auth.router, prefix="/auth", tags=["authentication"])
 api_router.include_router(users.router, prefix="/users", tags=["users"])
 api_router.include_router(case.router, prefix="/cases", tags=["cases"])
+api_router.include_router(documents.router, prefix="/documents", tags=["documents"])
 
 # Additional routers will be added here as we implement them:
-# api_router.include_router(documents.router, prefix="/documents", tags=["documents"])
 # api_router.include_router(tasks.router, prefix="/tasks", tags=["tasks"])
 # api_router.include_router(events.router, prefix="/events", tags=["events"])
 # api_router.include_router(evidence.router, prefix="/evidence", tags=["evidence"])

@@ -31,3 +31,4 @@ class Case(Base):
     
     assigned_attorney = relationship("Attorney", back_populates="cases")
     client = relationship("Client", back_populates="cases")
+    documents = relationship("Document", back_populates="case", cascade="all, delete-orphan")
