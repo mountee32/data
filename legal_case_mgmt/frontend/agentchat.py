@@ -52,14 +52,13 @@ def list_all_cases() -> str:
 
 # Interactive case lookup
 if __name__ == "__main__":
-    print("Welcome to the Case Information Assistant. You can:")
-    print("1. Get details for a specific case by entering the case ID.")
-    print("2. List all cases by typing 'list all cases'.")
-    command = input("Enter your command: ")
-    if command == "list all cases":
-        case_result = agent.run_sync('List all cases')
-        print(case_result.data)
-    else:
-        case_id = command
-        case_result = agent.run_sync(f'Get information for case {case_id}', deps=case_id)
+    result = agent.run_sync('display a wlecome message and explain the options available and that they can quit the chat by saying quit')
+    print(result.data)
+    
+    while True:
+        print('-----------')
+        command = input("Enter your command: ")
+        if command.lower() == "quit":
+            break
+        case_result = agent.run_sync(command)
         print(case_result.data)
