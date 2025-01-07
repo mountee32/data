@@ -18,5 +18,4 @@ class Client(Base):
     created_at = Column(Date, default=datetime.utcnow)
     updated_at = Column(Date, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    # Relationships
-    cases = relationship("Case", back_populates="client")
+    # Relationships removed for PoC

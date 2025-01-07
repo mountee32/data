@@ -1,31 +1,46 @@
 from datetime import datetime
+from typing import Optional, Dict, Any
 from pydantic import BaseModel
-from typing import Optional
 
 class DocumentBase(BaseModel):
     case_id: int
-    title: str
-    document_type: str
-    file_path: Optional[str] = None
+    filename: str
+    file_type: str
+    file_size: int
+    description: Optional[str] = None
+    document_metadata: Optional[Dict[str, Any]] = None
 
 class DocumentCreate(DocumentBase):
-    created_by: int
+    file_path: str
 
 class DocumentUpdate(BaseModel):
-    title: Optional[str] = None
-    file_path: Optional[str] = None
-    document_type: Optional[str] = None
+    filename: Optional[str] = None
+    description: Optional[str] = None
+    document_metadata: Optional[Dict[str, Any]] = None
 
 class DocumentInDBBase(DocumentBase):
-    document_id: int
-    created_at: datetime
-    created_by: int
+    id: int
+    file_path: str
+    upload_date: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class Document(DocumentInDBBase):
     pass
 
 class DocumentInDB(DocumentInDBBase):
     pass
+
+# Schema for document upload response
+class DocumentUploadResponse(BaseModel):
+    id: int
+    filename: str
+    file_type: str
+    file_size: int
+    upload_date: datetime
+    description: Optional[str] = None
+    document_metadata: Optional[Dict[str, Any]] = None
+
+    class Config:
+        from_attributes = True

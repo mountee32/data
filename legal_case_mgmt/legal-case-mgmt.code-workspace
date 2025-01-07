@@ -1,0 +1,26 @@
+{
+    "folders": [
+        {
+            "path": ".",
+            "name": "Legal Case Management System"
+        }
+    ],
+    "settings": {
+        "git.enabled": true,
+        "git.path": "/usr/bin/git",
+        "git.ignoreLimitWarning": true,
+        "git.autofetch": true,
+        "git.confirmSync": true,
+        "git.enableSmartCommit": true,
+        "git.suggestSmartCommit": true,
+        "git.openRepositoryInParentFolders": "always",
+        "files.exclude": {
+            "**/.git": true,
+            "**/.svn": true,
+            "**/.hg": true,
+            "**/CVS": true,
+            "**/.DS_Store": true,
+            "**/Thumbs.db": true
+        }
+    }
+}

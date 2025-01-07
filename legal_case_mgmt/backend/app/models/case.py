@@ -25,10 +25,9 @@ class Case(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
-    # Relationships
-    assigned_attorney_id = Column(Integer, ForeignKey("attorneys.attorney_id"))
-    client_id = Column(Integer, ForeignKey("clients.client_id"))
-    
-    assigned_attorney = relationship("Attorney", back_populates="cases")
-    client = relationship("Client", back_populates="cases")
+    # Optional IDs for PoC
+    assigned_attorney_id = Column(Integer, nullable=True)
+    client_id = Column(Integer, nullable=True)
+
+    # Relationship with documents
     documents = relationship("Document", back_populates="case", cascade="all, delete-orphan")

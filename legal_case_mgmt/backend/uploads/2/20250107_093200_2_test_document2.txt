@@ -1,0 +1,8 @@
+This is a second test document for the legal case management system.
+
+Document Information:
+- Type: Text File
+- Purpose: Testing multiple document uploads
+- Created: 2025-01-07
+
+This document demonstrates the ability to handle multiple documents per case.

@@ -1,0 +1,62 @@
+Legal Case Management System - Technical and Functional Specification
+
+Project Structure:
+/data/legal_case_mgmt/
+├── backend/    # Current FastAPI backend implementation
+└── frontend/   # (Planned) Frontend implementation
+
+1. System Overview
+   - Purpose: Manage legal cases, documents, and related entities
+   - Scope: Case tracking, document management, client management
+
+2. Core Components
+   - Models:
+     * Case: Represents a legal case with attributes (case number, parties, status)
+     * Client: Represents a client with attributes (name, contact info)
+     * Document: Represents legal documents with attributes (type, content, case reference)
+
+   - API:
+     * RESTful API endpoints for CRUD operations
+     * Version: v1
+     * Endpoints: /cases, /clients, /documents
+
+   - Database:
+     * Alembic migrations for schema management
+     * Tables: cases, clients, documents
+
+3. Document Management Features
+   - Document Types:
+     * Case Briefs
+     * Legal Contracts
+     * Court Filings
+   - Storage: documents directory with individual files
+   - Operations: Create, Read, Update, Delete
+
+4. Technical Stack
+   Backend:
+   - Language: Python
+   - Framework: FastAPI
+   - Database: PostgreSQL
+   - Version Control: Alembic
+   - Server Configuration:
+     * Host: 0.0.0.0 (accessible from any network interface)
+     * Port: 8000
+     * Development mode with auto-reload enabled
+   
+   Frontend: (Planned)
+   - To be implemented
+
+5. Testing
+   - Test Plan: testplan.md
+   - Test Documents: documents/test_document.txt, documents/test_document2.txt
+
+6. Current State
+   - Core models implemented (case.py, client.py, document.py)
+   - API endpoints defined (api.py, endpoints/documents.py)
+   - CRUD operations implemented (crud/document.py)
+   - Document utilities implemented (file.py)
+   - Schema definitions implemented (schemas/document.py)
+   - Sample documents created:
+     * documents/case_brief_1.txt
+     * documents/legal_contract_1.txt
+     * documents/court_filing_1.txt

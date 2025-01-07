@@ -1,6 +1,6 @@
 # Legal Case Management System - Technical and Functional Specification
 
-## 1. System Overview
+## 1. System Overview.
 The Legal Case Management System is a comprehensive platform designed to manage all aspects of legal cases, including client management, case tracking, document handling, filings, and expense tracking.
 
 ## 2. Core Entities
