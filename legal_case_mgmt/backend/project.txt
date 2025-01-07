@@ -3,7 +3,7 @@ Legal Case Management System - Technical and Functional Specification
 Project Structure:
 /data/legal_case_mgmt/
 ├── backend/    # Current FastAPI backend implementation
-└── frontend/   # (Planned) Frontend implementation
+└── frontend/   # Frontend implementation with agent chat interface
 
 1. System Overview
    - Purpose: Manage legal cases, documents, and related entities
@@ -17,8 +17,181 @@ Project Structure:
 
    - API:
      * RESTful API endpoints for CRUD operations
+     * Base URL: http://172.17.0.2:8000
      * Version: v1
-     * Endpoints: /cases, /clients, /documents
+     * Base Path: /api/v1
+     
+     Cases API Endpoints:
+     1. List Cases
+        - GET /api/v1/cases/
+        - Query Parameters:
+          * skip (optional): Number of records to skip (default: 0)
+          * limit (optional): Maximum number of records to return (default: 100)
+        - Example:
+          ```
+          curl -X GET http://172.17.0.2:8000/api/v1/cases?skip=0&limit=10
+          ```
+
+     2. Get Single Case
+        - GET /api/v1/cases/{case_id}
+        - Example:
+          ```
+          curl -X GET http://172.17.0.2:8000/api/v1/cases/1
+          ```
+
+     3. Create Case
+        - POST /api/v1/cases/
+        - Required Fields:
+          * case_number: string
+          * title: string
+          * case_type: string
+          * status: string
+        - Optional Fields:
+          * court: string
+          * jurisdiction: string
+          * filing_date: datetime
+          * description: string
+          * practice_area: string
+          * statute_of_limitations: datetime
+          * opposing_counsel: string
+          * judge: string
+          * assigned_attorney_id: integer
+          * client_id: integer
+        - Example:
+          ```
+          curl -X POST http://172.17.0.2:8000/api/v1/cases/ \
+          -H "Content-Type: application/json" \
+          -d '{
+            "case_number": "2024-001",
+            "title": "Smith v. Johnson",
+            "case_type": "Civil Litigation",
+            "status": "Active",
+            "court": "Superior Court",
+            "jurisdiction": "California"
+          }'
+          ```
+
+     4. Update Case
+        - PUT /api/v1/cases/{case_id}
+        - All fields are optional for updates
+        - Example:
+          ```
+          curl -X PUT http://172.17.0.2:8000/api/v1/cases/1 \
+          -H "Content-Type: application/json" \
+          -d '{
+            "status": "Closed",
+            "description": "Case settled out of court"
+          }'
+          ```
+
+     5. Delete Case
+        - DELETE /api/v1/cases/{case_id}
+        - Example:
+          ```
+          curl -X DELETE http://172.17.0.2:8000/api/v1/cases/1
+          ```
+     
+     Documents API Endpoints:
+     1. Upload Document
+        - POST /api/v1/cases/{case_id}/documents
+        - Multipart form data:
+          * file: File to upload (required)
+          * description: Document description (optional)
+          * document_metadata: JSON string with additional metadata (optional)
+        - Example:
+          ```
+          curl -X POST http://172.17.0.2:8000/api/v1/cases/1/documents \
+          -F "file='path/to/document.pdf"' (see below for file content) \
+          -F "description=Case brief for initial hearing" \
+          -F 'document_metadata={"type": "brief", "version": "1.0"}'
+          ```
+
+     2. List Case Documents
+        - GET /api/v1/cases/{case_id}/documents
+        - Query Parameters:
+          * skip (optional): Number of records to skip (default: 0)
+          * limit (optional): Maximum number of records to return (default: 100)
+        - Example:
+          ```
+          curl -X GET http://172.17.0.2:8000/api/v1/cases/1/documents?skip=0&limit=10
+          ```
+
+     3. Get Document Details
+        - GET /api/v1/documents/{document_id}
+        - Example:
+          ```
+          curl -X GET http://172.17.0.2:8000/api/v1/documents/1
+          ```
+
+     4. Download Document
+        - GET /api/v1/documents/{document_id}/download
+        - Returns the actual file content
+        - Example:
+          ```
+          curl -X GET http://172.17.0.2:8000/api/v1/documents/1/download --output downloaded_file.pdf
+          ```
+
+     5. Update Document Details
+        - PUT /api/v1/documents/{document_id}
+        - Optional Fields:
+          * filename: string
+          * description: string
+          * document_metadata: JSON object
+        - Example:
+          ```
+          curl -X PUT http://172.17.0.2:8000/api/v1/documents/1 \
+          -H "Content-Type: application/json" \
+          -d '{
+            "filename": "updated_brief.pdf",
+            "description": "Updated case brief with new arguments",
+            "document_metadata": {"version": "2.0", "status": "final"}
+          }'
+          ```
+
+     6. Delete Document
+        - DELETE /api/v1/documents/{document_id}
+        - Deletes both the database record and the physical file
+        - Example:
+          ```
+          curl -X DELETE http://172.17.0.2:8000/api/v1/documents/1
+          ```
+
+     Users API Endpoints:
+     1. List Users
+        - GET /api/v1/users/
+        - Example:
+          ```
+          curl -X GET http://172.17.0.2:8000/api/v1/users/
+          ```
+
+     2. Get Single User
+        - GET /api/v1/users/{user_id}
+        - Example:
+          ```
+          curl -X GET http://172.17.0.2:8000/api/v1/users/1
+          ```
+
+     3. Update User
+        - PUT /api/v1/users/{user_id}
+        - Optional Fields:
+          * username: string
+          * email: string (must be valid email format)
+        - Example:
+          ```
+          curl -X PUT http://172.17.0.2:8000/api/v1/users/1 \
+          -H "Content-Type: application/json" \
+          -d '{
+            "username": "newusername",
+            "email": "newemail@example.com"
+          }'
+          ```
+
+     4. Delete User
+        - DELETE /api/v1/users/{user_id}
+        - Example:
+          ```
+          curl -X DELETE http://172.17.0.2:8000/api/v1/users/1
+          ```
 
    - Database:
      * Alembic migrations for schema management
@@ -42,9 +215,31 @@ Project Structure:
      * Host: 0.0.0.0 (accessible from any network interface)
      * Port: 8000
      * Development mode with auto-reload enabled
+     * Start Script: ../start_api.sh (executable shell script that:
+       - Creates and activates Python virtual environment if needed
+       - Installs requirements automatically
+       - Starts the API server with auto-reload enabled)
    
-   Frontend: (Planned)
-   - To be implemented
+   Frontend:
+   - Agent Chat Interface (agentchat.py):
+     * Uses OpenRouter API for AI model interaction
+     * Environment Configuration:
+       - API key stored in .env file
+       - Uses python-dotenv for environment variable management
+       - Virtual environment (venv) for package management
+     * Dependencies:
+       - requests: HTTP client for API calls
+       - python-dotenv: Environment variable management
+       - pydantic-ai: AI model integration
+     * Start Script: ../start_chat.sh (executable shell script that:
+       - Uses absolute path to frontend directory for reliability
+       - Creates and activates Python virtual environment if needed
+       - Installs required packages automatically
+       - Starts the chat interface)
+     * Features:
+       - Interactive case lookup
+       - Natural language case information retrieval
+       - Integration with backend API endpoints
 
 5. Testing
    - Test Plan: testplan.md
@@ -60,3 +255,4 @@ Project Structure:
      * documents/case_brief_1.txt
      * documents/legal_contract_1.txt
      * documents/court_filing_1.txt
+   - Frontend agent chat interface implemented with secure API key management
