@@ -1,0 +1,23 @@
+# Legal Case Management System
+
+## Technical Specification
+
+### Frontend Agent Chat
+- Uses Pydantic AI framework with OpenRouter API
+- Supports two main operations:
+  1. get_case_info: Retrieves details for a specific case by making an API call to `http://172.17.0.2:8000/api/v1/cases/{case_id}`
+  2. list_all_cases: Retrieves a list of all cases by making an API call to `http://172.17.0.2:8000/api/v1/cases`
+- Error handling for API responses
+- Interactive command interface:
+  - Accepts case ID for specific case lookup
+  - Accepts "list all cases" command for full case listing
+
+## Functional Requirements
+
+### Case Information Assistant
+- Must retrieve and display case details when provided with a case ID
+- Must retrieve and display a list of all cases when requested
+- Must handle API errors gracefully and inform the user
+- Must present information in a clear, organized manner
+- Must focus on key details: case number, title, status, and type
+- Must politely inform user if case is not found
