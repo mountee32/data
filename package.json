@@ -1,0 +1,23 @@
+{
+  "name": "data",
+  "version": "1.0.0",
+  "description": "A prototype banking chatbot that allows users to authenticate and perform basic banking operations like checking balances and viewing transactions.",
+  "main": "test-supabase.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mountee32/data.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mountee32/data/issues"
+  },
+  "homepage": "https://github.com/mountee32/data#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.48.1"
+  }
+}
