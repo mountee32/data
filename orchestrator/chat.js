@@ -33,14 +33,18 @@ class ChatHandler {
             // Store bot response
             await db.storeMessage(sessionId, customerId, response, true);
 
-            // Store metrics
-            await this.storeMetrics(sessionId, metrics);
-
-            return {
+            const result = {
                 success: true,
                 response,
-                metrics
+                ...(process.argv.includes('--detailed') ? { metrics } : {})
             };
+
+            // Store metrics in detailed mode
+            if (process.argv.includes('--detailed')) {
+                await this.storeMetrics(sessionId, metrics);
+            }
+
+            return result;
         } catch (error) {
             console.error('Chat handling error:', error);
             return {

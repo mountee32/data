@@ -18,10 +18,12 @@ class OpenRouterClient {
         try {
             const messages = this.buildMessages(context, message);
             
-            console.log('Sending request to OpenRouter:', {
-                model: this.MODEL,
-                messageCount: messages.length
-            });
+            if (process.argv.includes('--detailed')) {
+                console.log('Sending request to OpenRouter:', {
+                    model: this.MODEL,
+                    messageCount: messages.length
+                });
+            }
 
             const response = await axios.post(this.API_URL, {
                 model: this.MODEL,
@@ -39,11 +41,13 @@ class OpenRouterClient {
                 }
             });
 
-            console.log('OpenRouter response:', {
-                status: response.status,
-                statusText: response.statusText,
-                data: response.data
-            });
+            if (process.argv.includes('--detailed')) {
+                console.log('OpenRouter response:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: response.data
+                });
+            }
 
             const endTime = Date.now();
             const metrics = {
