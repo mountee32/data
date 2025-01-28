@@ -17,54 +17,66 @@ A prototype banking chatbot that allows users to authenticate and perform basic 
 
 ## Setup
 
-1. Configure Supabase:
+1. Database Setup:
 
-The project uses Supabase for data storage. The following tables are required:
+The project uses SQLite for data storage, providing a lightweight, file-based database perfect for development and testing. The database file is located at `db/banking.db` and contains the following tables:
 
 - `customers`: Stores customer credentials
-  - `account_number` (varchar): Customer's account number
-  - `online_banking_code` (varchar): Customer's online banking code
-  - `created_at` (timestamptz): Account creation timestamp
+  - `account_number` (TEXT PRIMARY KEY): Customer's account number
+  - `online_banking_code` (TEXT): Customer's online banking code
+  - `created_at` (DATETIME): Account creation timestamp
 
 - `chat_history`: Stores conversation history
-  - `session_id` (uuid): Unique session identifier
-  - `customer_id` (varchar): Reference to customer account
-  - `message` (text): The chat message content
-  - `is_bot` (boolean): True for bot responses, false for user messages
-  - `created_at` (timestamptz): Message timestamp
+  - `id` (INTEGER PRIMARY KEY): Auto-incrementing ID
+  - `session_id` (TEXT): Session identifier
+  - `customer_id` (TEXT): Reference to customer account
+  - `message` (TEXT): The chat message content
+  - `is_bot` (INTEGER): 1 for bot responses, 0 for user messages
+  - `created_at` (DATETIME): Message timestamp
 
 - `accounts`: Stores customer bank accounts
-  - `id` (uuid): Unique account identifier
-  - `customer_id` (varchar): Reference to customer
-  - `account_type` (varchar): Type of account (e.g., CHECKING, SAVINGS)
-  - `balance` (decimal): Current balance
-  - `currency` (varchar): Account currency
-  - `is_active` (boolean): Account status
-  - `created_at` (timestamptz): Account creation timestamp
+  - `id` (TEXT PRIMARY KEY): Unique account identifier
+  - `customer_id` (TEXT): Reference to customer
+  - `account_type` (TEXT): Type of account (e.g., CHECKING, SAVINGS)
+  - `balance` (DECIMAL): Current balance
+  - `currency` (TEXT): Account currency
+  - `is_active` (INTEGER): 1 for active, 0 for inactive
+  - `created_at` (DATETIME): Account creation timestamp
 
 - `transactions`: Stores account transactions
-  - `id` (uuid): Unique transaction identifier
-  - `account_id` (uuid): Reference to account
-  - `transaction_type` (varchar): Type of transaction
-  - `amount` (decimal): Transaction amount
-  - `description` (varchar): Transaction description
-  - `created_at` (timestamptz): Transaction timestamp
+  - `id` (TEXT PRIMARY KEY): Unique transaction identifier
+  - `account_id` (TEXT): Reference to account
+  - `transaction_type` (TEXT): Type of transaction
+  - `amount` (DECIMAL): Transaction amount
+  - `description` (TEXT): Transaction description
+  - `created_at` (DATETIME): Transaction timestamp
 
-To set up the banking tables:
-1. Open your Supabase project's SQL editor
-2. Create a "New query"
-3. Copy and paste the contents of setup-banking-tables.sql
-4. Click "Run" to execute the SQL commands
-5. Verify the tables were created in the "Table Editor"
-6. Run the data population script:
+To set up the database:
+
+1. Install dependencies:
    ```bash
-   node test-setup-banking-data.js
+   npm install sqlite3
    ```
 
-Note: If you get permission errors, make sure to:
-1. Enable "Row Level Security (RLS)" for each table
-2. Add appropriate policies (the SQL script includes these)
-3. Use the correct API key (anon/public key for normal operations)
+2. Initialize the database with schema and test data:
+   ```bash
+   node setup-sqlite-db.js
+   ```
+
+3. Verify the setup by running tests:
+   ```bash
+   node test-sqlite-banking.js
+   ```
+
+Benefits of SQLite:
+- Zero-configuration required
+- Single file database (easy to backup/version)
+- No network latency
+- Perfect for development and testing
+- No authentication needed
+- Direct SQL queries (no REST API)
+
+Note: The database file is created in the `db` directory. You can delete this file and run setup-sqlite-db.js again to reset to a fresh state.
 
 2. Install dependencies for both services:
 
@@ -82,44 +94,82 @@ npm install
 
 Create `orchestrator/.env` with:
 ```
-PORT=3000
-SUPABASE_URL=your_supabase_url
-SUPABASE_KEY=your_supabase_key
+PORT=3000  # Port for the orchestrator service
 ```
+
+Note: No database configuration is needed as SQLite uses a local file (db/banking.db)
 
 ## Running Tests
 
-The project includes test scripts for both authentication and chat functionality:
+The project includes test scripts for each component:
 
-1. Authentication Flow Test:
+1. SQLite Database Tests:
+```bash
+# Initialize database with schema and test data
+node setup-sqlite-db.js
 
+# Test direct database operations
+node test-sqlite-banking.js
+```
+
+Tests the following database operations:
+- Schema validation
+- Customer data access
+- Account queries
+- Transaction records
+- Chat history storage
+
+2. Bank Simulator Tests (Port 3001):
+```bash
+./test-bank-simulator.sh
+```
+
+Tests the following endpoints:
+- POST /auth/validate: Customer authentication
+  - Request: { accountNumber, code }
+  - Response: { valid: boolean }
+
+- GET /accounts/{id}/balance: Account balance lookup
+  - Response: { balance: number, currency: string }
+
+- GET /accounts/{id}/transactions: Transaction history
+  - Response: { transactions: Array<Transaction> }
+
+The test script verifies:
+- Service startup
+- Valid/invalid credentials
+- Balance retrieval
+- Transaction history
+- Error handling
+- Service cleanup
+
+3. Orchestrator Tests (Port 3000):
 ```bash
 chmod +x test-auth.sh  # Make script executable (first time only)
 ./test-auth.sh
 ```
 
-The authentication test will:
-1. Start both the bank simulator and orchestrator services
-2. Test authentication with valid credentials
-3. Test protected endpoint access
-4. Test invalid credentials handling
-5. Automatically clean up services when done
+Tests the following endpoints:
+- POST /auth: Customer authentication
+  - Request: { accountNumber, code }
+  - Response: { token }
 
-2. Chat History Test:
-```bash
-node test-chat-history.js
-```
+- POST /chat: Message handling
+  - Request: { message }
+  - Headers: Authorization Bearer token
+  - Response: { response }
 
-The chat history test will:
-1. Connect to Supabase directly
-2. Insert test messages into chat_history
-3. Verify bot responses are stored
-4. Retrieve and display conversation flow
-5. Verify message ordering and timestamps
+The test script verifies:
+- Service startup and health checks
+- Authentication flow
+- Protected endpoint access
+- Chat message processing
+- Error handling
+- Service cleanup
 
 ### Test Credentials
 
-The following credentials are stored in the Supabase customers table:
+The following credentials are stored in the SQLite database:
 
 - Account Number: 1234567890
 - Online Code: 123456
@@ -132,25 +182,32 @@ Invalid credentials (for testing):
 
 If you want to test the endpoints manually:
 
-1. Start the services:
+1. Ensure database is initialized:
+```bash
+node setup-sqlite-db.js  # If not already done
+```
+
+2. Start the services:
 ```bash
 ./start-dev.sh
 ```
 
-2. Authenticate:
+3. Authenticate:
 ```bash
 curl -X POST http://localhost:3000/auth \
   -H "Content-Type: application/json" \
-  -d '{"accountNumber": "TEST-123", "code": "0000"}'
+  -d '{"accountNumber": "1234567890", "code": "123456"}'
 ```
 
-3. Use the returned token to check balance:
+4. Use the returned token to check balance:
 ```bash
 curl -X POST http://localhost:3000/chat \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{"message": "What is my balance?"}'
 ```
+
+Note: The SQLite database file (db/banking.db) can be deleted and recreated at any time to reset to a clean state.
 
 ## Development Notes
 
