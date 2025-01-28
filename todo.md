@@ -85,21 +85,47 @@
    - [ ] Error tracking
    - [ ] Usage reporting
 
-## Next Immediate Steps
-1. Test authentication flow using test-auth.sh
-   - Run bank simulator and orchestrator
-   - Execute test script to verify login flow
-   - Document any issues found
-2. Add proper error handling and user feedback
-3. Implement chat history persistence
-4. Add session timeout handling
-5. Expand test coverage
-   - Add more test cases to test-auth.sh
+## Next Immediate Steps: Chat Layer Implementation
+
+1. OpenRouter LLM Integration (Phase 1)
+   - Implement OpenRouter API client in orchestrator
+   - Configure API authentication and endpoints
+   - Set up basic prompt engineering
+   - Add response validation and parsing
+   - Add performance metrics tracking
+   - Test with live OpenRouter API
+
+2. Context Management (Phase 2)
+   - Implement conversation context tracking
+   - Add chat history integration
+   - Build context-aware prompt generation
+   - Add banking action extraction
+   - Test context management
+
+3. Banking Integration (Phase 2)
+   - Enhance banking operations interface
+   - Add structured action validation
+   - Implement response formatting
+   - Add error handling and retries
+   - Test banking operations
+
+4. Testing Infrastructure (Phase 3)
+   - Set up mock LLM test framework
    - Add integration tests for chat flow
-   - Add unit tests for core functions
+   - Create banking operation test scenarios
+   - Add error case testing
+   - Document test coverage
+
+5. Security & Performance (Phase 3)
+   - Add input sanitization
+   - Implement response validation
+   - Set up monitoring metrics
+   - Add performance tracking
+   - Test security measures
 
 ## Notes
-- Focus on user experience improvements first
-- Maintain security as a priority
-- Keep monitoring system performance
-- Document all new features thoroughly
+- Maintain existing banking functionality while adding LLM
+- Focus on testability of LLM integration
+- Keep security as top priority
+- Document prompt engineering patterns
+- Monitor LLM performance and costs
