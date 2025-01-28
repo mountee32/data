@@ -46,6 +46,16 @@ const schema = `
     FOREIGN KEY (account_id) REFERENCES accounts(id)
   );
 
+  -- Create sessions table
+  CREATE TABLE IF NOT EXISTS sessions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    token TEXT UNIQUE NOT NULL,
+    customer_id TEXT NOT NULL,
+    is_valid INTEGER DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES customers(account_number)
+  );
+
   -- Create chat_history table
   CREATE TABLE IF NOT EXISTS chat_history (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -58,6 +68,7 @@ const schema = `
   );
 
   -- Create indexes
+  CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(token);
   CREATE INDEX IF NOT EXISTS idx_accounts_customer_id ON accounts(customer_id);
   CREATE INDEX IF NOT EXISTS idx_transactions_account_id ON transactions(account_id);
   CREATE INDEX IF NOT EXISTS idx_chat_history_session ON chat_history(session_id);
