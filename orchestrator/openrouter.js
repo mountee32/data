@@ -1,5 +1,7 @@
 require('dotenv').config();
 const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
 
 class OpenRouterClient {
     constructor() {
@@ -10,6 +12,45 @@ class OpenRouterClient {
         this.API_KEY = process.env.OPENROUTER_API_KEY;
         this.API_URL = 'https://openrouter.ai/api/v1/chat/completions';
         this.MODEL = 'openai/gpt-4o-mini';
+        
+        // Load prompts from config file
+        this.loadPrompts();
+    }
+
+    loadPrompts() {
+        try {
+            const configPath = path.join(__dirname, 'prompts.config.txt');
+            const content = fs.readFileSync(configPath, 'utf8');
+            
+            // Split content by prompt identifier and store in prompts object
+            const lines = content.split('\n');
+            this.prompts = {};
+            
+            let currentPrompt = null;
+            let currentContent = [];
+            
+            for (const line of lines) {
+                if (line.startsWith('SYSTEM_PROMPT_') || line.startsWith('USER_PROMPT_')) {
+                    // If we were building a previous prompt, save it
+                    if (currentPrompt) {
+                        this.prompts[currentPrompt] = currentContent.join('\n');
+                        currentContent = [];
+                    }
+                    currentPrompt = line.trim();
+                } else {
+                    currentContent.push(line);
+                }
+            }
+            
+            // Save the last prompt
+            if (currentPrompt) {
+                this.prompts[currentPrompt] = currentContent.join('\n');
+            }
+
+        } catch (error) {
+            console.error('Failed to load prompts config:', error);
+            throw new Error('Failed to load prompts configuration');
+        }
     }
 
     async generateResponse(context, message) {
@@ -88,17 +129,12 @@ class OpenRouterClient {
     }
 
     buildMessages(context, message) {
-        let systemPrompt = `You are a banking assistant. Help users with their banking needs while following these rules:
-1. Only provide information about accounts and transactions the user has access to
-2. Never share sensitive information like full account numbers or personal details
-3. If you need to perform a banking action, clearly indicate what action is needed
-4. Format currency values with 2 decimal places
-5. Keep responses clear and concise
-
-Available banking actions:
-- Check account balance
-- View recent transactions
-- Update contact information`;
+        let systemPrompt = this.prompts['SYSTEM_PROMPT_BANKING_ASSISTANT'];
+        
+        if (!systemPrompt) {
+            console.error('Banking assistant system prompt not found in config');
+            throw new Error('Required system prompt not found in configuration');
+        }
 
         // Add account context if available
         if (context.accounts) {
